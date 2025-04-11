@@ -1,10 +1,8 @@
 // src/router.tsx
-import { createBrowserRouter } from "react-router-dom";
-import App from "./App";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import Login from "./component/pages/Login";
 import LoginSucess from "./LoginSucess";
 import Register from "./component/pages/Register";
-
 export const router = createBrowserRouter([
   {
     path: "/login",
@@ -12,7 +10,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/",
-    element: <App />,
+    element: <Navigate to={"/login"} />,
   },
   {
     path: "/login-sucess",
