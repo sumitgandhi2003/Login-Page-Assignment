@@ -24,7 +24,11 @@ const Register = () => {
     resolver: zodResolver(registerSchema),
   });
 
-  const { mutate: registerUser, isPending } = useMutation({
+  const {
+    mutate: registerUser,
+    isPending,
+    error,
+  } = useMutation({
     mutationFn: async (formData: RegisterFormData) => {
       const res = await axios.post(
         "http://localhost:4000/api/auth/register",
@@ -97,6 +101,13 @@ const Register = () => {
             </p>
           )}
         </div>
+        {error && (
+          <p className="text-sm text-red-500 mt-4">
+            {axios.isAxiosError(error)
+              ? error.response?.data?.message || "Login failed"
+              : "Login failed"}
+          </p>
+        )}
 
         <button
           type="submit"

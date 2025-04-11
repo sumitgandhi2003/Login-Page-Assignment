@@ -1,10 +1,9 @@
-import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { Navigate, replace, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // ✅ Zod Schema
 const loginSchema = z.object({
@@ -39,11 +38,14 @@ const Login = () => {
       });
     },
     onError: (error) => {
-      console.error("Login failed:", error.response?.data || error.message);
+      if (axios.isAxiosError(error)) {
+        console.log("Login failed:", error.response?.data || error.message);
+      } else {
+        console.log("Unexpected error:", error);
+      }
     },
   });
-
-  const onSubmit = (data) => {
+  const onSubmit = (data: any) => {
     loginMutation.mutate(data);
   };
 
@@ -87,7 +89,9 @@ const Login = () => {
 
         {loginMutation.isError && (
           <p className="text-sm text-red-500 mt-4">
-            {loginMutation.error?.response?.data?.message || "Login failed"}
+            {axios.isAxiosError(loginMutation.error)
+              ? loginMutation.error.response?.data?.message || "Login failed"
+              : "Login failed"}
           </p>
         )}
       </form>
