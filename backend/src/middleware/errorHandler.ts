@@ -6,7 +6,7 @@ const errorHandler = (
   res: Response,
   next: NextFunction
 ): void => {
-  //   console.log(err);
+  console.log(err);
   const statusCode = err.statusCode || 500;
   const message = err.message || "Something went wrong!";
   const errors = err.errors;

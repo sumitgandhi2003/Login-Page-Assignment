@@ -11,7 +11,6 @@ const loginSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-// 🎯 React Hook Form + Zod
 const Login = () => {
   const {
     register,
@@ -104,80 +103,3 @@ const Login = () => {
 };
 
 export default Login;
-
-// import { useForm } from "react-hook-form";
-// import { z } from "zod";
-// import { zodResolver } from "@hookform/resolvers/zod";
-
-// const loginSchema = z.object({
-//   email: z
-//     .string({ required_error: "Email is Required" })
-//     .email("Invalid Email")
-//     .min(1, "Email is required"),
-//   password: z.string().min(6, "Password must be min 6 charactor"),
-// });
-
-// type LoginFormData = z.infer<typeof loginSchema>;
-
-// const Login = () => {
-//   const {
-//     register,
-//     handleSubmit,
-//     formState: { errors },
-//   } = useForm<LoginFormData>({
-//     resolver: zodResolver(loginSchema),
-//   });
-
-//   const onSubmit = (data: LoginFormData) => {
-//     console.log(data);
-
-//   };
-
-//   return (
-//     <div className="flex items-center justify-center min-h-screen bg-white">
-//       <form
-//         onSubmit={handleSubmit(onSubmit)}
-//         className="flex flex-col gap-4 w-full max-w-xs"
-//       >
-//         <h2 className="text-xl font-semibold text-center mb-2">
-//           Welcome back!
-//         </h2>
-
-//         <div>
-//           <input
-//             type="text"
-//             placeholder="Email"
-//             {...register("email")}
-//             className="w-full border rounded-md px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
-//           />
-//           {errors.email && (
-//             <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>
-//           )}
-//         </div>
-
-//         <div>
-//           <input
-//             type="password"
-//             placeholder="Password"
-//             {...register("password")}
-//             className="w-full border rounded-md px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
-//           />
-//           {errors.password && (
-//             <p className="text-sm text-red-500 mt-1">
-//               {errors.password.message}
-//             </p>
-//           )}
-//         </div>
-
-//         <button
-//           type="submit"
-//           className="bg-[#273469] text-white py-2 rounded-md hover:bg-[#1e2a4f] transition"
-//         >
-//           Login
-//         </button>
-//       </form>
-//     </div>
-//   );
-// };
-
-// export default Login;

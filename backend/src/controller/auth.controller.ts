@@ -44,7 +44,7 @@ export const handleUserRegister = async (
   try {
     const { username, email, password } = registerSchema.parse(req.body);
     console.log(username, email, password);
-
+    console.log(typeof username, typeof email, typeof password);
     // check if user already exists
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -57,7 +57,6 @@ export const handleUserRegister = async (
       };
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    // create user
     const newUser = await prisma.user.create({
       data: { username, email, password: hashedPassword },
     });
