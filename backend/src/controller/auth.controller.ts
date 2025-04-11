@@ -1,0 +1,78 @@
+const express = require("express");
+const bcrypt = require("bcrypt");
+const { PrismaClient } = require("@prisma/client");
+const {
+  registerSchema,
+  loginSchema,
+} = require("../validation/auth.validation");
+import type { Request, Response, NextFunction } from "express";
+const prisma = new PrismaClient();
+
+const handleUserLogin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { email, password } = loginSchema.parse(req.body);
+    console.log(req.body);
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      throw { statusCode: 400, message: "User not found!" };
+    }
+
+    //
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw { statusCode: 400, message: "Invalid credentials!" };
+    }
+    // Exclude sensitive fields like password before sending the response
+    const { password: _, createdAt, ...userWithoutPassword } = user;
+    return res.status(200).json({
+      success: true,
+      data: userWithoutPassword,
+      message: "User logged in successfully!",
+    });
+  } catch (error) {
+    // console.log(error);
+    next(error);
+  }
+};
+
+const handleUserRegister = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { username, email, password } = registerSchema.parse(req.body);
+    console.log(username, email, password);
+
+    // check if user already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      throw {
+        statusCode: 400,
+        message: "User already exits!",
+      };
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    // create user
+    const newUser = await prisma.user.create({
+      data: { username, email, password: hashedPassword },
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "User registered successfully!",
+      user: { id: newUser.id, email: newUser.email },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { handleUserRegister, handleUserLogin };
