@@ -1,18 +1,15 @@
-const express = require("express");
-const bcrypt = require("bcrypt");
-const { PrismaClient } = require("@prisma/client");
-const {
-  registerSchema,
-  loginSchema,
-} = require("../validation/auth.validation");
+import bcrypt from "bcrypt";
+import { PrismaClient } from "@prisma/client";
+import { registerSchema, loginSchema } from "../validation/auth.validation.js";
 import type { Request, Response, NextFunction } from "express";
+
 const prisma = new PrismaClient();
 
-const handleUserLogin = async (
+export const handleUserLogin = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const { email, password } = loginSchema.parse(req.body);
     console.log(req.body);
@@ -28,7 +25,7 @@ const handleUserLogin = async (
     }
     // Exclude sensitive fields like password before sending the response
     const { password: _, createdAt, ...userWithoutPassword } = user;
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       data: userWithoutPassword,
       message: "User logged in successfully!",
@@ -39,11 +36,11 @@ const handleUserLogin = async (
   }
 };
 
-const handleUserRegister = async (
+export const handleUserRegister = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const { username, email, password } = registerSchema.parse(req.body);
     console.log(username, email, password);
@@ -65,7 +62,7 @@ const handleUserRegister = async (
       data: { username, email, password: hashedPassword },
     });
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       message: "User registered successfully!",
       user: { id: newUser.id, email: newUser.email },
@@ -74,5 +71,3 @@ const handleUserRegister = async (
     next(error);
   }
 };
-
-module.exports = { handleUserRegister, handleUserLogin };
