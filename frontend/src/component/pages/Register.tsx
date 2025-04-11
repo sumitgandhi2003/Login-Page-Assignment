@@ -3,8 +3,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 const registerSchema = z.object({
   username: z.string().min(1, "UserName is required"),
   email: z.string().email("Invalid email address"),
@@ -15,7 +15,7 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 
 const Register = () => {
   const navigate = useNavigate();
-
+  console.log(SERVER_URL);
   const {
     register,
     handleSubmit,
@@ -30,10 +30,7 @@ const Register = () => {
     error,
   } = useMutation({
     mutationFn: async (formData: RegisterFormData) => {
-      const res = await axios.post(
-        "http://localhost:4000/api/auth/register",
-        formData
-      );
+      const res = await axios.post(`${SERVER_URL}/api/auth/register`, formData);
       return res.data;
     },
     onSuccess: (data) => {
@@ -116,6 +113,12 @@ const Register = () => {
         >
           {isPending ? "Registering..." : "Register"}
         </button>
+        <div className={`text-center mt-4 text-gray-600  `}>
+          Already have an account?{" "}
+          <Link className="text-blue-500 hover:underline" to={"/login"}>
+            Log in
+          </Link>
+        </div>
       </form>
     </div>
   );

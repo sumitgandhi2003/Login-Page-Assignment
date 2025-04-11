@@ -3,8 +3,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 // ✅ Zod Schema
 const loginSchema = z.object({
   email: z.string().min(1, "email is required"),
@@ -24,10 +24,7 @@ const Login = () => {
 
   const loginMutation = useMutation({
     mutationFn: async (formData) => {
-      const res = await axios.post(
-        "http://localhost:4000/api/auth/login",
-        formData
-      );
+      const res = await axios.post(`${SERVER_URL}/api/auth/login`, formData);
       return res.data;
     },
     onSuccess: (data) => {
@@ -94,6 +91,13 @@ const Login = () => {
               : "Login failed"}
           </p>
         )}
+
+        <div className={`text-center mt-4 text-gray-60 `}>
+          Don't have an account?{" "}
+          <Link className="text-blue-500 hover:underline" to={"/register"}>
+            sign up
+          </Link>
+        </div>
       </form>
     </div>
   );
